@@ -1,5 +1,7 @@
 package gui;
 
+import app.Application;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +13,11 @@ import java.io.IOException;
 
 public class Window extends JFrame implements KeyListener {
 
+    private Application application;
     private Canvas canvas;
 
-    public Window() {
+    public Window(Application application) {
+        this.application = application;
         this.canvas = new Canvas();
 
         this.setPreferredSize(new Dimension(500, 500));
@@ -25,15 +29,7 @@ public class Window extends JFrame implements KeyListener {
         this.addKeyListener(this);
     }
 
-    /**
-     * TODO: Clean up method
-     * <p>
-     * Grabs the image from the canvas object, transforms it and saves the final image.
-     */
-    public void export() {
-        // Get the image from the canvas
-        BufferedImage image = canvas.getImage();
-
+    public BufferedImage transformImage(BufferedImage image) {
         // Scale image to desired dimension (28 x 28)
         Image tmp = image.getScaledInstance(28, 28, Image.SCALE_SMOOTH);
         BufferedImage scaledImage = new BufferedImage(28, 28, BufferedImage.TYPE_INT_ARGB);
@@ -62,13 +58,29 @@ public class Window extends JFrame implements KeyListener {
         // Free resources
         g2d.dispose();
 
+        return scaledImage;
+    }
+
+    /**
+     * TODO: Clean up method
+     * <p>
+     * Grabs the image from the canvas object, transforms it and saves the final image.
+     */
+    public void export() {
+        BufferedImage image = transformImage(canvas.getImage());
+
         // Save image
         try {
-            File outputFile = new File("saved2.png");
-            ImageIO.write(scaledImage, "png", outputFile);
+            File outputFile = new File("exported_image.png");
+            ImageIO.write(image, "png", outputFile);
         } catch (IOException e) {
             // handle exception
         }
+    }
+
+    public void test() {
+        BufferedImage image = transformImage(canvas.getImage());
+        application.getResult(image);
     }
 
     public void keyTyped(KeyEvent e) {
@@ -78,6 +90,7 @@ public class Window extends JFrame implements KeyListener {
         switch (e.getKeyChar()) {
             case KeyEvent.VK_ENTER:
                 System.out.println("Exporting...");
+                test();
                 export();
                 break;
         }
