@@ -56,12 +56,7 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseListener
 
         // Create image if it has not been created yet
         if (image == null) {
-            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-
-            // Get graphics context
-            gImage = (Graphics2D) image.getGraphics();
-            gImage.setColor(Color.WHITE);
-            gImage.fillRect(0, 0, getWidth(), getHeight());
+            clear();
         }
 
         // Set color and stroke
@@ -80,6 +75,26 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseListener
         }
 
         g.drawImage(image, 0, 0, null);
+    }
+
+    /**
+     * Clears the image
+     */
+    public void clear() {
+        // Create image
+        image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        // Get graphics context and clear image
+        gImage = (Graphics2D) image.getGraphics();
+        gImage.setColor(Color.WHITE);
+        gImage.fillRect(0, 0, getWidth(), getHeight());
+
+        // Clear paths
+        paths = new ArrayList<List<Point>>();
+        currentPath = new ArrayList<Point>();
+
+        // Repaint to show effects
+        repaint();
     }
 
     public void mouseDragged(MouseEvent e) {
