@@ -33,12 +33,45 @@ public class Application {
         INDArray output = model.output(imageData);
 
         String[] labels = new String[]{
-                "alarm_clock",
-                "anvil      ",
+                "airplane",
+                "alarm_clock      ",
                 "apple      ",
-                "car        ",
-                "lightning  "
+                "baseball_bat        ",
+                "books  ",
+                "brain",
+                "butterfly",
+                "cactus",
+                "cake",
+                "dolphin",
+                "flashlight",
+                "flower",
+                "flying_saucer",
+                "golf_club",
+                "hat",
+                "lightning",
+                "lobster",
+                "mailbox",
+                "matches",
+                "mug",
+                "octopus",
+                "palm_tree",
+                "panda",
+                "penguin",
+                "radio",
+                "sandwich",
+                "saw",
+                "shark",
+                "shoe",
+                "submarine"
         };
+//        String[] labels = new String[]{
+//                "aircraft_carrier",
+//                "baseball_bat",
+//                "birthday_cake",
+//                "bush",
+//                "cat",
+//                "crayon"
+//        };
 
         for (int i = 0; i < output.length(); i++) {
             System.out.println(labels[i] + ": " + output.getColumn(i));
@@ -52,7 +85,7 @@ public class Application {
      * @return 1D NDArray containing the image data
      */
     public INDArray imageToNDArray(BufferedImage image) {
-        float[] data = new float[image.getWidth() * image.getHeight()];
+        float[][][][] data = new float[1][1][image.getWidth()][image.getHeight()];
 
         // Loop through each pixel of the image
         for (int x = 0; x < image.getWidth(); x++) {
@@ -66,10 +99,10 @@ public class Application {
 
                 // Calculate grey scale value and normalise
                 float grey = (float) (red + green + blue) / 3;
-                float normalised = grey / 255.0f;
+                float normalised = 1 - grey / 255.0f;
 
                 // Save value into array
-                data[y * image.getHeight() + x] = normalised;
+                data[0][0][y][x] = normalised;
             }
         }
 
