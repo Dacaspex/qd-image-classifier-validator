@@ -9,6 +9,8 @@ import org.nd4j.linalg.factory.Nd4j;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Application class responsible for managing the application state.
@@ -28,16 +30,17 @@ public class Application {
      *
      * @param image Input image
      */
-    public void getResult(BufferedImage image) {
+    public Map<String, Float> getResult(BufferedImage image) {
         INDArray imageData = imageToNDArray(image);
         INDArray output = model.output(imageData);
+        Map<String, Float> result = new HashMap<String, Float>();
 
         String[] labels = new String[]{
                 "airplane",
-                "alarm_clock      ",
-                "apple      ",
-                "baseball_bat        ",
-                "books  ",
+                "alarm_clock",
+                "apple",
+                "baseball_bat",
+                "books",
                 "brain",
                 "butterfly",
                 "cactus",
@@ -48,6 +51,7 @@ public class Application {
                 "flying_saucer",
                 "golf_club",
                 "hat",
+                "key",
                 "lightning",
                 "lobster",
                 "mailbox",
@@ -64,18 +68,13 @@ public class Application {
                 "shoe",
                 "submarine"
         };
-//        String[] labels = new String[]{
-//                "aircraft_carrier",
-//                "baseball_bat",
-//                "birthday_cake",
-//                "bush",
-//                "cat",
-//                "crayon"
-//        };
 
         for (int i = 0; i < output.length(); i++) {
+            result.put(labels[i], output.getFloat(i));
             System.out.println(labels[i] + ": " + output.getColumn(i));
         }
+
+        return result;
     }
 
     /**

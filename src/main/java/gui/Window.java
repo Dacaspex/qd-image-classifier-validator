@@ -10,6 +10,10 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Window class.
@@ -26,10 +30,15 @@ public class Window extends JFrame implements KeyListener {
      * Canvas on which the user can draw
      */
     private Canvas canvas;
+    /**
+     * Table frame that shows the results from the network
+     */
+    private ResultTable resultTable;
 
     public Window(Application application) {
         this.application = application;
         this.canvas = new Canvas();
+        this.resultTable = new ResultTable();
 
         this.setPreferredSize(new Dimension(500, 500));
         this.add(canvas);
@@ -102,8 +111,30 @@ public class Window extends JFrame implements KeyListener {
      * Tests the image against the network
      */
     public void test() {
+        // Get data and sort it
         BufferedImage image = transformImage(canvas.getImage());
-        application.getResult(image);
+        Map<String, Float> result = application.getResult(image)
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        // Setup array
+        String[][] data = new String[result.size()][2];
+        int index = result.size() - 1;
+
+        // Iterate over result set and put into table data array
+        Iterator iter = result.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            data[index][0] = (String) entry.getKey();
+            data[index--][1] = Float.toString((float) entry.getValue());
+        }
+
+        // Show data
+        resultTable.setData(data);
+        resultTable.open();
+        this.requestFocus();
     }
 
     public void keyTyped(KeyEvent e) {
